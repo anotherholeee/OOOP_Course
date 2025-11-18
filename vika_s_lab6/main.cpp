@@ -1,9 +1,10 @@
 #include<iostream>
+#include<windows.h>
 
 using namespace std;
 int main() {
-
-cout<<"Hello World!"<<endl;
+SetConsoleOutputCP(CP_UTF8);
+cout<<"Привет, Мир!"<<endl;
 
     return 0;
 }
