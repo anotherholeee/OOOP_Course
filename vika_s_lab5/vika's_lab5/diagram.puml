@@ -1,0 +1,85 @@
+@startuml
+
+' Определение классов
+class Engine {
+  - power: int
+  + Engine(pwr: int = 100)
+  + start(): void
+  + inputInfo(): void
+  + getPower(): int
+  + ~Engine()
+}
+
+class Body {
+  - color: std::string
+  + Body(clr: std::string = "белый")
+  + paint(): void
+  + inputInfo(): void
+  + getColor(): std::string
+  + ~Body()
+}
+
+class Car {
+  - model: std::string
+  + Car(mdl: std::string = "Седан", pwr: int = 120, clr: std::string = "синий")
+  + showInfo(): void
+  + inputInfo(): void
+  + getModel(): std::string
+}
+
+class Truck {
+  - loadCapacity: double
+  + Truck(mdl: std::string = "Грузовик", pwr: int = 300, clr: std::string = "красный", capacity: double = 5.0)
+  + transportLoad(): void
+  + inputInfo(): void
+  + getLoadCapacity(): double
+}
+
+class DumpTruck {
+  - bucketRaised: bool
+  + DumpTruck(mdl: std::string = "Самосвал", pwr: int = 350, clr: std::string = "желтый", capacity: double = 10.0)
+  + work(): void
+  + inputInfo(): void
+  + showInfo(): void
+  + demonstration(): void
+}
+
+' Определение наследования с измененным направлением стрелок
+Engine <|-- Car
+Body <|-- Car
+Car <|-- Truck
+Truck <|-- DumpTruck
+
+' Определение отношений для функций меню (как зависимости)
+class Menu {
+  + inputEngineArray(engines: Engine[], size: int): void
+  + inputBodyArray(bodies: Body[], size: int): void
+  + inputCarArray(cars: Car[], size: int): void
+  + inputTruckArray(trucks: Truck[], size: int): void
+  + inputDumpTruckArray(dumpTrucks: DumpTruck[], size: int): void
+  + showMainMenu(): void
+  + handleMainMenu(option: int, engines: Engine[], bodies: Body[], cars: Car[], trucks: Truck[], dumpTrucks: DumpTruck[]): void
+  + showInputMenu(): void
+  + handleInputMenu(inputOption: int, engines: Engine[], bodies: Body[], cars: Car[], trucks: Truck[], dumpTrucks: DumpTruck[]): void
+  + showAllInfo(engines: Engine[], bodies: Body[], cars: Car[], trucks: Truck[], dumpTrucks: DumpTruck[]): void
+  + menu(): void
+}
+
+' Показать зависимости между Menu и другими классами с измененным направлением
+Engine <.. Menu
+Body <.. Menu
+Car <.. Menu
+Truck <.. Menu
+DumpTruck <.. Menu
+
+' Константы (можно показать как заметки)
+note top of Menu
+  Константы:
+  ENGINE_COUNT
+  BODY_COUNT
+  CAR_COUNT
+  TRUCK_COUNT
+  DUMP_TRUCK_COUNT
+end note
+
+@enduml

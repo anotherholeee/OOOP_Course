@@ -1,0 +1,9 @@
+# ninja log v6
+51	2738	7809213300887619	CMakeFiles/vika_s_lab1.dir/main.cpp.obj	c79634012928befe
+59	1017	7809213300967667	CMakeFiles/vika_s_lab1.dir/box.cpp.obj	56afdf090041230a
+2739	2873	7809213327757392	vika_s_lab1.exe	7d4fe4afc972c3ca
+67	1034	7809213301053095	CMakeFiles/vika_s_lab1.dir/menu.cpp.obj	b7bf6f43fe2fda5a
+34	852	7851542240340487	CMakeFiles/vika_s_lab1.dir/menu.cpp.obj	582a822edd80986d
+28	865	7851542240271515	CMakeFiles/vika_s_lab1.dir/box.cpp.obj	5f4620e76f57a44f
+20	2519	7851542240192425	CMakeFiles/vika_s_lab1.dir/main.cpp.obj	330faa3fea0447d
+2523	2713	7851542265223281	vika_s_lab1.exe	862379b18e393616

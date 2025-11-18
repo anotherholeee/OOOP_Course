@@ -1,0 +1,3 @@
+C:/Users/roiko/CLionProjects/OOOP_Course/vika_s_lab1/cmake-build-debug/CMakeFiles/vika_s_lab1.dir
+C:/Users/roiko/CLionProjects/OOOP_Course/vika_s_lab1/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/roiko/CLionProjects/OOOP_Course/vika_s_lab1/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,73 @@
+@startuml
+
+!define abstract abstract
+!define protected #protected
+!define private #private
+!define public #public
+
+class Transport {
+  {abstract} <<abstract>>
+  {protected} time : float
+  {protected} cost : float
+  {protected} average_speed : int
+  {protected} quality : float
+  {public} + Transport(time: float, cost: float, average_speed: int, quality: float)
+  {public} + Transport()
+  {public} + ~Transport()
+  {public} + calculate_time(distance: int) : void
+  {public} + get_time_formatted(hours: int&, minutes: int&) : void
+  {public} + calculate_cost(distance: int) : void
+  {public} + calculate_quality() : float
+  {public} + get_time() : float
+  {public} + get_cost() : float
+  {public} + get_quality() : float
+  {public} + get_speed() : int
+  {public} + {abstract} get_cost_per_km() : float
+  {public} + get_info() : void
+  {public} + set_info() : void
+  {public} + operator<(other: const Transport&) : bool
+}
+
+class Airplane {
+  {private} - DEFAULT_SPEED : const int = 175
+  {private} - COST_PER_KM : const float = 0.2628
+  {public} + Airplane()
+  {public} + get_info() : void
+  {public} + get_cost_per_km() : float
+}
+
+class Train {
+  {private} - train_type : string
+  {private} - COST_PER_KM : const float = 0.1575
+  {public} + Train()
+  {public} + get_info() : void
+  {public} + set_info() : void
+  {public} + get_cost_per_km() : float
+}
+
+class Car {
+  {private} - DEFAULT_SPEED : const int = 80
+  {private} - COST_PER_KM_BENZIN : const float = 0.2031
+  {private} - COST_PER_KM_DIZEL : const float = 0.1631
+  {private} - car_type : string
+  {private} - current_cost_per_km : float
+  {public} + Car()
+  {public} + set_info() : void
+  {public} + get_info() : void
+  {public} + get_cost_per_km() : float
+}
+
+class Menu {
+  {public} + run() : void
+}
+
+Transport <|-- Airplane
+Transport <|-- Train
+Transport <|-- Car
+Menu --> Transport
+
+note right of Transport::get_cost_per_km
+  Чисто виртуальная функция
+end note
+
+@enduml
