@@ -9,4 +9,3 @@ add_executable(vika_s_lab1 main.cpp
         menu.cpp
         menu.h)
 
-target_compile_features(vika_s_lab1 PRIVATE cxx_std_20)

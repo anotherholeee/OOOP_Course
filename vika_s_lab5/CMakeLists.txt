@@ -17,4 +17,3 @@ add_executable(vika_s_lab5 main.cpp
         Menu.cpp
         Menu.h)
 
-target_compile_features(vika_s_lab5 PRIVATE cxx_std_20)
