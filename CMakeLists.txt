@@ -9,3 +9,5 @@ add_subdirectory(vika_s_lab3)
 add_subdirectory(vika_s_lab4)
 add_subdirectory(vika_s_lab5)
 add_subdirectory(vika_s_lab6)
+#add_subdirectory(vika_s_lab7)
+
