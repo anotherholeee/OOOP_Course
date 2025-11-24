@@ -14,12 +14,12 @@ User(): groupNum(0){};
 User(string fio, string faculty, int groupNum): fio(std::move(fio)), faculty(std::move(faculty)), groupNum(groupNum){};
 User(const User& copy): groupNum(copy.groupNum) {}
 
-    // ГЕТТЕРЫ (получить значение)
+
      string getFio()  { return std::move(fio); }
      string getFaculty()  { return std::move(faculty); }
     int getGroupNum() const { return groupNum; }
 
-    // СЕТТЕРЫ (установить значение)
+
     void setFio(const string& newFio) {
     if (!newFio.empty()) {
         fio = newFio;
@@ -44,7 +44,7 @@ User(const User& copy): groupNum(copy.groupNum) {}
 
 
 class Answer: public User{ //дата выполнения теста, ФИО выполнившего тест
-    private:
+    protected:
 int date;
     public:
 Answer(): date(0) {};
@@ -57,41 +57,50 @@ int getDate() const { return date; }
 };
 
 
-
+//может быть шаблонным questionText, variants
+template<class TQuestion, class TVariants>
 class Question { //Текст вопроса, варианты ответа, правильный ответ, баллы за вопрос
-    private:
-    string questionText;
-    string variants;
-    string rightVariant;
+    protected:
+    TQuestion questionText;
+    TVariants variants;
+    int rightVariantNumber;
     int scores;
 
 public:
-    Question() : scores(0) {}
+    Question() : rightVariantNumber(0), scores(0) {}
 
-    Question(string questionText, string  variants, string  rightVariant, int scores) : questionText(
-        std::move(questionText)), variants(std::move(variants)), rightVariant(std::move(rightVariant)), scores(scores) {}
-    Question(const Question& copy): questionText(copy.questionText),variants(copy.variants),rightVariant(copy.rightVariant),scores(copy.scores) {}
+    Question(TQuestion questionText, TVariants variants, int rightVariantNumber, int scores)
+        : questionText(questionText),
+          variants(variants),
+          rightVariantNumber(rightVariantNumber),
+          scores(scores) {}
 
-    string getQuestionText() { return std::move(questionText); }
-    string getVariants() { return std::move(variants); }
-    string getRightVariant() { return std::move(rightVariant); }
+    Question(const Question& copy)
+            : questionText(copy.questionText),
+              variants(copy.variants),
+              rightVariantNumber(copy.rightVariantNumber),
+              scores(copy.scores) {}
+
+    TQuestion getQuestionText() { return questionText; }
+    TVariants getVariants() { return variants; }
+    int getRightVariantNumber() const { return rightVariantNumber; }
     int getScores() const { return scores; }
 
-    void setQuestionText(string&& newQuestionText) {  // Для перемещения
+    void setQuestionText(string&& newQuestionText) {
         if (!newQuestionText.empty()) {
-            questionText = std::move(newQuestionText);
+            questionText = newQuestionText;
         }
     }
 
-    void setVariants(const string& newVariants) {
+    void setVariants(TVariants newVariants) {
         if (!newVariants.empty()) {
             variants = newVariants;
         }
     }
 
-    void setRightVariant(const string& newRightVariant) {
-        if (!newRightVariant.empty()) {
-            rightVariant = newRightVariant;
+    void setRightVariantNumber(int newRightVariantNumber) {
+        if (newRightVariantNumber > 0) {  // обычно номера ответов начинаются с 1
+            rightVariantNumber = newRightVariantNumber;
         }
     }
 
@@ -100,6 +109,18 @@ public:
             scores = newScores;
         }
     }
+
+    bool checkAnswer(int userAnswer) const {
+        return userAnswer == rightVariantNumber;
+    }
+
+    // Метод для отображения вопроса и вариантов ответа
+    void displayQuestion() const {
+        cout << "Вопрос: " << questionText << endl;
+        cout << "Варианты ответов:\n" << variants << endl;
+        cout << "Баллы за вопрос: " << scores << endl;
+    }
+
 };
 
 
@@ -136,7 +157,7 @@ class Test { //название теста, тема теста, перечен�
 
     string testName;
     string testTheme;
-Question questions[MAX_QUESTIONS];
+    Question<int> questions[MAX_QUESTIONS]{}; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Answer answers[MAX_ANSWERS];
     int questionCount;
     int answerCount;
