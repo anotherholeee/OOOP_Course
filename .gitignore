@@ -1,0 +1,28 @@
+# Файлы CLion
+.idea/
+cmake-build-*/
+CMakeLists.txt.user
+
+# Файлы сборки
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+
+# Папки сборки
+build/
+Debug/
+Release/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+
+# Временные файлы
+*.tmp
+*.temp
