@@ -18,7 +18,7 @@ void Worker::set_info() {
     std::cin >> patronymic;
 }
 
-// Hourly_worker implementations
+
 Hourly_worker::Hourly_worker(): Worker(), pay_per_hour(0.0f), hours(0) {}
 
 Hourly_worker::Hourly_worker(float pay_per_hour, int hours): Worker(),
@@ -47,7 +47,19 @@ void Hourly_worker::set_info() {
     std::cin >> hours;
 }
 
-// Piecework_worker implementations
+void Hourly_worker::save_to_file(std::ofstream& file) const {
+    file << "Hourly" << "\n"
+         << last_name << "\n"
+         << name << "\n"
+         << patronymic << "\n"
+         << pay_per_hour << "\n"
+         << hours << "\n";
+}
+
+std::string Hourly_worker::get_type() const {
+    return "Почасовой работник";
+}
+
 Piecework_worker::Piecework_worker(): Worker(), pay_per_piece(0), pieces(0) {}
 
 Piecework_worker::Piecework_worker(float pay_per_piece, int pieces): Worker(),
@@ -74,4 +86,17 @@ void Piecework_worker::set_info() {
     std::cin >> pay_per_piece;
     std::cout << "Введите количество единиц продукции: ";
     std::cin >> pieces;
+}
+
+void Piecework_worker::save_to_file(std::ofstream& file) const {
+    file << "Piecework" << "\n"
+         << last_name << "\n"
+         << name << "\n"
+         << patronymic << "\n"
+         << pay_per_piece << "\n"
+         << pieces << "\n";
+}
+
+std::string Piecework_worker::get_type() const {
+    return "Сдельный работник";
 }

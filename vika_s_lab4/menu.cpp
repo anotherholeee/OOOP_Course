@@ -2,8 +2,25 @@
 #include <iostream>
 #include <limits>
 #include <windows.h>
+#include <fstream>
 
 using namespace std;
+
+void save_workers_to_file(Worker* workers[], int count, const std::string& filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Ошибка открытия файла для записи!" << endl;
+        return;
+    }
+
+    file << count << "\n";
+    for (int i = 0; i < count; i++) {
+        workers[i]->save_to_file(file);
+    }
+
+    file.close();
+    cout << "Данные успешно сохранены в файл: " << filename << endl;
+}
 
 void menu() {
     SetConsoleCP(CP_UTF8);
@@ -24,10 +41,12 @@ void menu() {
             cout << "2 - Просмотреть информацию о всех сотрудниках" << endl;
             cout << "3 - Создать копию последнего добавленного сотрудника" << endl;
             cout << "4 - Найти сотрудников с зарплатой больше указанной" << endl;
+            cout << "5 - Сохранить данные в файл" << endl;
         } else {
             cout << "2 - (недоступно - сначала добавьте информацию)" << endl;
             cout << "3 - (недоступно - сначала добавьте информацию)" << endl;
             cout << "4 - (недоступно - сначала добавьте информацию)" << endl;
+            cout << "5 - (недоступно - сначала добавьте информацию)" << endl;
         }
 
         cout << "0 - Выйти из программы" << endl;
@@ -46,7 +65,6 @@ void menu() {
         switch (choice) {
             case 0:
                 cout << "Выход из программы..." << endl;
-                // Очистка памяти
                 for (int i = 0; i < actual_count; i++) {
                     delete workers[i];
                     workers[i] = nullptr;
@@ -97,6 +115,7 @@ void menu() {
                 break;
             }
 
+
             case 2: {
                 if (!has_info) {
                     cout << "Сначала добавьте информацию о сотрудниках!" << endl;
@@ -104,7 +123,7 @@ void menu() {
                 }
                 cout << "\nИнформация о всех сотрудниках:" << endl;
                 for (int j = 0; j < actual_count; j++) {
-                    cout << "\nСотрудник " << j + 1 << ":" << endl;
+                    cout << "\nСотрудник " << j + 1 << " (" << workers[j]->get_type() << "):" << endl;
                     workers[j]->get_info();
                 }
                 break;
@@ -147,7 +166,7 @@ void menu() {
                 bool found = false;
                 for (int j = 0; j < actual_count; j++) {
                     if (workers[j]->calculate_salary() > min_salary) {
-                        cout << "\nСотрудник " << j + 1 << ":" << endl;
+                        cout << "\nСотрудник " << j + 1 << " (" << workers[j]->get_type() << "):" << endl;
                         workers[j]->get_info();
                         found = true;
                     }
@@ -159,8 +178,22 @@ void menu() {
                 break;
             }
 
+            case 5: {
+                if (!has_info) {
+                    cout << "Сначала добавьте информацию о сотрудниках!" << endl;
+                    break;
+                }
+
+                string filename;
+                cout << "Введите имя файла для сохранения (например: workers.txt): ";
+                cin >> filename;
+
+                save_workers_to_file(workers, actual_count, filename);
+                break;
+            }
+
             default:
-                cout << "Неверный выбор! Пожалуйста, выберите вариант от 0 до 4." << endl;
+                cout << "Неверный выбор! Пожалуйста, выберите вариант от 0 до 5." << endl;
                 break;
         }
 
