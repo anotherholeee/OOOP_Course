@@ -1,11 +1,11 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include "user.h"
+#include "answer.h"
 #include "result.h"
 #include "question.h"
 #include <string>
-#include <fstream>
-using namespace std;
 
 class Test {
 private:
@@ -14,8 +14,8 @@ private:
     static const int MAX_RESULTS = 100;
     static const int MAX_VARIANTS = 10;
 
-    string testName;
-    string testTheme;
+    std::string testName;
+    std::string testTheme;
     IQuestion* questions[MAX_QUESTIONS];
     Answer answers[MAX_ANSWERS];
     Result results[MAX_RESULTS];
@@ -25,19 +25,19 @@ private:
 
 public:
     Test();
-    Test(string name, string theme);
+    Test(std::string name, std::string theme);
     Test(const Test& other);
     Test& operator=(const Test& other);
     ~Test();
 
-    string getTestName() const;
-    string getTestTheme() const;
+    std::string getTestName() const;
+    std::string getTestTheme() const;
     int getQuestionCount() const;
     int getAnswerCount() const;
     int getResultCount() const;
 
-    void setTestName(const string& name);
-    void setTestTheme(const string& theme);
+    void setTestName(const std::string& name);
+    void setTestTheme(const std::string& theme);
 
     bool addQuestion(IQuestion* question);
     bool addAnswer(const Answer& answer);

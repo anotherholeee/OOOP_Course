@@ -3,23 +3,22 @@
 
 #include "user.h"
 #include <string>
-using namespace std;
 
 class Answer : public User {
 protected:
-    string date;
-    string testName;
+    std::string date;
+    std::string testName;
 public:
     Answer();
-    Answer(string fio, const string& faculty, int groupNum, string date, string testName);
+    Answer(std::string fio, const std::string& faculty, int groupNum, std::string date, std::string testName);
     Answer(const Answer& copy);
-    ~Answer() override;
+    ~Answer() override = default;
 
-    string getDate() const;
-    string getTestName() const;
+    std::string getDate() const;
+    std::string getTestName() const;
 
-    void setDate(const string& newDate);
-    void setTestName(const string& newTestName);
+    void setDate(const std::string& newDate);
+    void setTestName(const std::string& newTestName);
 };
 
 #endif

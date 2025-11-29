@@ -2,25 +2,24 @@
 #define USER_H
 
 #include <string>
-using namespace std;
 
 class User {
 protected:
-    string fio;
-    string faculty;
+    std::string fio;
+    std::string faculty;
     int groupNum;
 public:
     User();
-    User(string fio, string faculty, int groupNum);
-    User(const User& copy);
-    virtual ~User();
+    User(std::string fio, std::string faculty, int groupNum);
+    User(const User& copy) = default;
+    virtual ~User() = default;
 
-    string getFio() const;
-    string getFaculty() const;
+    std::string getFio() const;
+    std::string getFaculty() const;
     int getGroupNum() const;
 
-    void setFio(const string& newFio);
-    void setFaculty(const string& newFaculty);
+    void setFio(const std::string& newFio);
+    void setFaculty(const std::string& newFaculty);
     void setGroupNum(int newGroupNum);
 };
 

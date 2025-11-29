@@ -2,25 +2,20 @@
 
 User::User() : groupNum(0) {}
 
-User::User(string fio, string faculty, int groupNum) 
+User::User(std::string fio, std::string faculty, int groupNum)
     : fio(std::move(fio)), faculty(std::move(faculty)), groupNum(groupNum) {}
 
-User::User(const User& copy) 
-    : fio(copy.fio), faculty(copy.faculty), groupNum(copy.groupNum) {}
-
-User::~User() = default;
-
-string User::getFio() const { return fio; }
-string User::getFaculty() const { return faculty; }
+std::string User::getFio() const { return fio; }
+std::string User::getFaculty() const { return faculty; }
 int User::getGroupNum() const { return groupNum; }
 
-void User::setFio(const string& newFio) {
+void User::setFio(const std::string& newFio) {
     if (!newFio.empty()) {
         fio = newFio;
     }
 }
 
-void User::setFaculty(const string& newFaculty) {
+void User::setFaculty(const std::string& newFaculty) {
     if (!newFaculty.empty()) {
         faculty = newFaculty;
     }

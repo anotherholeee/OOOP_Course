@@ -1,35 +1,32 @@
-@startuml
-!theme plain
+@startuml TestingSystem
 
+' Настройки
 skinparam class {
     BackgroundColor White
     BorderColor Black
     ArrowColor Black
 }
-
 skinparam package {
-    BackgroundColor White
-    BorderColor Black
+    BackgroundColor LightGray
+    BorderColor DarkGray
 }
+hide circle
 
-title Классовая диаграмма системы тестирования
-
-package "Пользователи и ответы" {
+' Пакет Core Entities
+package "Core Entities" {
   class User {
     - fio: string
     - faculty: string
     - groupNum: int
     --
     + User()
-    + User(fio, faculty, groupNum)
-    + User(copy: User)
-    + ~User()
+    + User(string, string, int)
     + getFio(): string
     + getFaculty(): string
     + getGroupNum(): int
-    + setFio(newFio: string): void
-    + setFaculty(newFaculty: string): void
-    + setGroupNum(newGroupNum: int): void
+    + setFio(string): void
+    + setFaculty(string): void
+    + setGroupNum(int): void
   }
 
   class Answer {
@@ -37,13 +34,11 @@ package "Пользователи и ответы" {
     - testName: string
     --
     + Answer()
-    + Answer(fio, faculty, groupNum, date, testName)
-    + Answer(copy: Answer)
-    + ~Answer()
+    + Answer(string, string, int, string, string)
     + getDate(): string
     + getTestName(): string
-    + setDate(newDate: string): void
-    + setTestName(newTestName: string): void
+    + setDate(string): void
+    + setTestName(string): void
   }
 
   class Result {
@@ -51,89 +46,90 @@ package "Пользователи и ответы" {
     - passed: bool
     --
     + Result()
-    + Result(fio, faculty, groupNum, date, testName, result)
-    + Result(copy: Result)
-    + ~Result()
+    + Result(string, string, int, string, string, float)
     + getResult(): float
     + getPassed(): bool
-    + setResult(newResult: float): void
+    + setResult(float): void
     + display(): void
-    + displayTableHeader(): static void
-    + displayTableFooter(): static void
-    + displayTableRow(index: int): void
-    + saveToFile(file: ofstream, index: int): void
+    + displayTableRow(int): void
+    + saveToFile(ofstream&, int): void
+    + displayTableHeader(): void
+    + displayTableFooter(): void
   }
+
+  ' Наследование
+  User <|-- Answer
+  Answer <|-- Result
 }
 
-package "Вопросы" {
+' Пакет Questions
+package "Questions System" {
   interface IQuestion {
-    + ~IQuestion()
     + displayQuestion(): void
-    + checkAnswer(userAnswer: int): bool
+    + checkAnswer(int): bool
     + getScores(): int
     + getType(): string
     + getQuestionText(): string
     + getVariantsCount(): int
   }
 
-  class "Question<TQuestion, TVariants>" as Question {
-    - MAX_VARIANTS: static const int
+  class Question<TQuestion, TVariants> {
     - questionText: TQuestion
-    - variants: TVariants[]
+    - variants: TVariants[MAX_VARIANTS]
     - variantsCount: int
     - rightVariantNumber: int
     - scores: int
     - typeName: string
+    - MAX_VARIANTS: int = 10
     --
     + Question()
-    + Question(questionText, variantsArray, varCount, rightVariant, scores, type)
-    + Question(copy: Question)
-    + ~Question()
+    + Question(TQuestion, TVariants[], int, int, int, string)
     + getQuestionText(): string
     + getVariantsCount(): int
-    + getVariant(index: int): TVariants
+    + getVariant(int): TVariants
     + getRightVariantNumber(): int
     + getScores(): int
     + getType(): string
-    + setQuestionText(newQuestionText: TQuestion): void
-    + setVariants(newVariants: TVariants[], count: int): void
-    + setRightVariantNumber(newRightVariantNumber: int): void
-    + setScores(newScores: int): void
-    + checkAnswer(userAnswer: int): bool
+    + setQuestionText(TQuestion): void
+    + setVariants(TVariants[], int): void
+    + setRightVariantNumber(int): void
+    + setScores(int): void
+    + checkAnswer(int): bool
     + displayQuestion(): void
   }
+
+  ' Реализация интерфейса
+  IQuestion <|.. Question
 }
 
-package "Тестирование" {
+' Пакет Test Management
+package "Test Management" {
   class Test {
-    - MAX_QUESTIONS: static const int
-    - MAX_ANSWERS: static const int
-    - MAX_RESULTS: static const int
-    - MAX_VARIANTS: static const int
     - testName: string
     - testTheme: string
-    - questions: IQuestion*[]
-    - answers: Answer[]
-    - results: Result[]
+    - questions: IQuestion*[MAX_QUESTIONS]
+    - answers: Answer[MAX_ANSWERS]
+    - results: Result[MAX_RESULTS]
     - questionCount: int
     - answerCount: int
     - resultCount: int
+    - MAX_QUESTIONS: int = 50
+    - MAX_ANSWERS: int = 100
+    - MAX_RESULTS: int = 100
+    - MAX_VARIANTS: int = 10
     --
     + Test()
-    + Test(name: string, theme: string)
-    + Test(other: Test)
-    + operator=(other: Test): Test&
-    + ~Test()
+    + Test(string, string)
     + getTestName(): string
     + getTestTheme(): string
     + getQuestionCount(): int
     + getAnswerCount(): int
     + getResultCount(): int
-    + setTestName(name: string): void
-    + setTestTheme(theme: string): void
-    + addQuestion(question: IQuestion*): bool
-    + addAnswer(answer: Answer): bool
-    + addResult(result: Result): bool
+    + setTestName(string): void
+    + setTestTheme(string): void
+    + addQuestion(IQuestion*): bool
+    + addAnswer(Answer): bool
+    + addResult(Result): bool
     + displayTestInfo(): void
     + showMenu(): void
     - addTextQuestion(): void
@@ -146,31 +142,62 @@ package "Тестирование" {
   }
 }
 
-' Наследование
-User <|-- Answer
-Answer <|-- Result
-IQuestion <|.. Question
+' Пакет Utilities
+package "Utilities" {
+  class Utils {
+    + getCurrentDate(): string
+    + getInputInt(string, int, int): int
+    + getInputInt(string): int
+    + getInput<T>(string): T
+  }
+}
 
-' Композиция и агрегация
-Test *-- "0..*" IQuestion
-Test *-- "0..*" Answer
-Test *-- "0..*" Result
+' Пакет Menu
+package "Menu System" {
+  class Menu {
+    + mainMenu(): void
+  }
+}
 
-' Зависимости
-Test ..> User
-Test ..> Result
-Test ..> IQuestion
+' Ассоциации и зависимости
+Test --> "0..*" IQuestion : содержит
+Test --> "0..*" Answer : хранит
+Test --> "0..*" Result : хранит
+Test ..> Utils : использует
+Menu ..> Test : управляет
+Menu ..> Utils : использует
 
-note right of Test
-  Управляет всем процессом
-  тестирования: создание вопросов,
-  проведение тестов, сбор результатов
-end note
+' Специализации шаблонов
+class TextQuestion {
+  <<specialization>>
+  Question<string, string>
+}
 
+class NumericQuestion {
+  <<specialization>>
+  Question<string, int>
+}
+
+Question --> TextQuestion
+Question --> NumericQuestion
+
+' Note для объяснения шаблонов
 note right of Question
-  Шаблонный класс
+  Шаблонный класс:
   TQuestion - тип вопроса
   TVariants - тип вариантов ответов
+  Специализации:
+  - TextQuestion: string, string
+  - NumericQuestion: string, int
+end note
+
+' Note для констант
+note bottom of Test
+  Константы:
+  MAX_QUESTIONS = 50
+  MAX_ANSWERS = 100
+  MAX_RESULTS = 100
+  MAX_VARIANTS = 10
 end note
 
 @enduml

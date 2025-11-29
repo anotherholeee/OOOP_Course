@@ -1,8 +1,7 @@
 #include "test.h"
 #include "utils.h"
 #include <iostream>
-#include <iomanip>
-using namespace std;
+#include <fstream>
 
 Test::Test() : questionCount(0), answerCount(0), resultCount(0) {
     for (int i = 0; i < MAX_QUESTIONS; i++) {
@@ -10,7 +9,7 @@ Test::Test() : questionCount(0), answerCount(0), resultCount(0) {
     }
 }
 
-Test::Test(string name, string theme)
+Test::Test(std::string name, std::string theme)
     : testName(std::move(name)), testTheme(std::move(theme)), questionCount(0), answerCount(0), resultCount(0) {
     for (int i = 0; i < MAX_QUESTIONS; i++) {
         questions[i] = nullptr;
@@ -65,14 +64,14 @@ Test::~Test() {
     }
 }
 
-string Test::getTestName() const { return testName; }
-string Test::getTestTheme() const { return testTheme; }
+std::string Test::getTestName() const { return testName; }
+std::string Test::getTestTheme() const { return testTheme; }
 int Test::getQuestionCount() const { return questionCount; }
 int Test::getAnswerCount() const { return answerCount; }
 int Test::getResultCount() const { return resultCount; }
 
-void Test::setTestName(const string& name) { testName = name; }
-void Test::setTestTheme(const string& theme) { testTheme = theme; }
+void Test::setTestName(const std::string& name) { testName = name; }
+void Test::setTestTheme(const std::string& theme) { testTheme = theme; }
 
 bool Test::addQuestion(IQuestion* question) {
     if (questionCount < MAX_QUESTIONS) {
@@ -102,26 +101,26 @@ bool Test::addResult(const Result& result) {
 }
 
 void Test::displayTestInfo() const {
-    cout << "\n=== ИНФОРМАЦИЯ О ТЕСТЕ ===" << endl;
-    cout << "Название: " << testName << endl;
-    cout << "Тема: " << testTheme << endl;
-    cout << "Количество вопросов: " << questionCount << endl;
-    cout << "Количество ответов: " << answerCount << endl;
-    cout << "Количество результатов: " << resultCount << endl;
+    std::cout << "\n=== ИНФОРМАЦИЯ О ТЕСТЕ ===" << std::endl;
+    std::cout << "Название: " << testName << std::endl;
+    std::cout << "Тема: " << testTheme << std::endl;
+    std::cout << "Количество вопросов: " << questionCount << std::endl;
+    std::cout << "Количество ответов: " << answerCount << std::endl;
+    std::cout << "Количество результатов: " << resultCount << std::endl;
 }
 
 void Test::showMenu() {
     int choice;
     do {
-        cout << "\n=== МЕНЮ ТЕСТА: " << testName << " ===" << endl;
-        cout << "1. Добавить текстовый вопрос" << endl;
-        cout << "2. Добавить числовой вопрос" << endl;
-        cout << "3. Показать все вопросы" << endl;
-        cout << "4. Пройти тест" << endl;
-        cout << "5. Показать результаты" << endl;
-        cout << "6. Сохранить результаты в файл" << endl;
-        cout << "7. Информация о тесте" << endl;
-        cout << "0. Выход в главное меню" << endl;
+        std::cout << "\n=== МЕНЮ ТЕСТА: " << testName << " ===" << std::endl;
+        std::cout << "1. Добавить текстовый вопрос" << std::endl;
+        std::cout << "2. Добавить числовой вопрос" << std::endl;
+        std::cout << "3. Показать все вопросы" << std::endl;
+        std::cout << "4. Пройти тест" << std::endl;
+        std::cout << "5. Показать результаты" << std::endl;
+        std::cout << "6. Сохранить результаты в файл" << std::endl;
+        std::cout << "7. Информация о тесте" << std::endl;
+        std::cout << "0. Выход в главное меню" << std::endl;
 
         choice = getInputInt("Выберите действие: ", 0, 7);
 
@@ -133,100 +132,99 @@ void Test::showMenu() {
             case 5: displayResultsTable(); break;
             case 6: saveResultsToFile(); break;
             case 7: displayTestInfo(); break;
-            case 0: cout << "Выход..." << endl; break;
+            case 0: std::cout << "Выход..." << std::endl; break;
         }
     } while (choice != 0);
 }
 
 void Test::addTextQuestion() {
     if (questionCount >= MAX_QUESTIONS) {
-        cout << "Достигнуто максимальное количество вопросов!" << endl;
+        std::cout << "Достигнуто максимальное количество вопросов!" << std::endl;
         return;
     }
 
-    cout << "\n--- Текстовый вопрос ---" << endl;
+    std::cout << "\n--- Текстовый вопрос ---" << std::endl;
 
-    auto questionText = getInput<string>("Введите текст вопроса: ");
+    auto questionText = getInput<std::string>("Введите текст вопроса: ");
 
-    string variants[MAX_VARIANTS];
+    std::string variants[MAX_VARIANTS];
     int variantsCount = 4;
 
-    cout << "Введите 4 варианта ответов:" << endl;
+    std::cout << "Введите 4 варианта ответов:" << std::endl;
     for (int i = 0; i < variantsCount; i++) {
-        variants[i] = getInput<string>("Вариант " + to_string(i+1) + ": ");
+        variants[i] = getInput<std::string>("Вариант " + std::to_string(i+1) + ": ");
     }
 
     int rightAnswer = getInputInt("Номер правильного ответа (1-4): ", 1, 4) - 1;
     int scores = getInputInt("Баллы за вопрос: ", 0, 100);
 
-    IQuestion* question = new Question<string, string>(
+    IQuestion* question = new Question<std::string, std::string>(
         questionText, variants, variantsCount, rightAnswer, scores, "Текстовый"
     );
 
     if (addQuestion(question)) {
-        cout << "Текстовый вопрос добавлен!" << endl;
+        std::cout << "Текстовый вопрос добавлен!" << std::endl;
     } else {
         delete question;
-        cout << "Ошибка добавления вопроса!" << endl;
+        std::cout << "Ошибка добавления вопроса!" << std::endl;
     }
 }
 
 void Test::addNumericQuestion() {
     if (questionCount >= MAX_QUESTIONS) {
-        cout << "Достигнуто максимальное количество вопросов!" << endl;
+        std::cout << "Достигнуто максимальное количество вопросов!" << std::endl;
         return;
     }
 
-    cout << "\n--- Числовой вопрос ---" << endl;
+    std::cout << "\n--- Числовой вопрос ---" << std::endl;
 
-    auto questionText = getInput<string>("Введите текст вопроса: ");
+    auto questionText = getInput<std::string>("Введите текст вопроса: ");
 
     int variants[MAX_VARIANTS];
     int variantsCount = 4;
 
-    cout << "Введите 4 числовых варианта ответов:" << endl;
+    std::cout << "Введите 4 числовых варианта ответов:" << std::endl;
     for (int i = 0; i < variantsCount; i++) {
-        variants[i] = getInputInt("Вариант " + to_string(i+1) + ": ");
-    }
+variants[i] = getInputInt("Вариант " + std::to_string(i+1) + ": ", -1000000, 1000000);    }
 
     int rightAnswer = getInputInt("Номер правильного ответа (1-4): ", 1, 4) - 1;
     int scores = getInputInt("Баллы за вопрос: ", 0, 100);
 
-    IQuestion* question = new Question<string, int>(
+    IQuestion* question = new Question<std::string, int>(
         questionText, variants, variantsCount, rightAnswer, scores, "Числовой"
     );
 
     if (addQuestion(question)) {
-        cout << "Числовой вопрос добавлен!" << endl;
+        std::cout << "Числовой вопрос добавлен!" << std::endl;
     } else {
         delete question;
-        cout << "Ошибка добавления вопроса!" << endl;
+        std::cout << "Ошибка добавления вопроса!" << std::endl;
     }
 }
 
 void Test::displayAllQuestions() const {
-    cout << "\n=== ВОПРОСЫ ТЕСТА: " << testName << " ===" << endl;
+    std::cout << "\n=== ВОПРОСЫ ТЕСТА: " << testName << " ===" << std::endl;
     if (questionCount == 0) {
-        cout << "Вопросов пока нет!" << endl;
+        std::cout << "Вопросов пока нет!" << std::endl;
         return;
     }
 
     for (int i = 0; i < questionCount; i++) {
-        cout << "\nВопрос " << (i + 1) << " (" << questions[i]->getType() << "):" << endl;
+        std::cout << "\nВопрос " << (i + 1) << " (" << questions[i]->getType() << "):" << std::endl;
         questions[i]->displayQuestion();
     }
 }
 
 void Test::takeTest() {
     if (questionCount == 0) {
-        cout << "Нет вопросов для тестирования!" << endl;
+        std::cout << "Нет вопросов для тестирования!" << std::endl;
         return;
     }
 
-    cout << "\n=== НАЧАЛО ТЕСТА ===" << endl;
+    std::cout << "\n=== НАЧАЛО ТЕСТА ===" << std::endl;
 
-    auto fio = getInput<string>("Введите ваше ФИО: ");
-    auto faculty = getInput<string>("Введите факультет: ");
+    auto fio = getInput<std::string>("Введите ваше ФИО: ");
+    auto faculty = getInput<std::string>("Введите факультет: ");
     int groupNum = getInputInt("Введите номер группы (6 цифр): ", 100000, 999999);
     auto date = getCurrentDate();
 
@@ -237,17 +235,17 @@ void Test::takeTest() {
     int maxScore = 0;
 
     for (int i = 0; i < questionCount; i++) {
-        cout << "\n--- Вопрос " << (i + 1) << " ---" << endl;
+        std::cout << "\n--- Вопрос " << (i + 1) << " ---" << std::endl;
         questions[i]->displayQuestion();
 
         int variantsCount = questions[i]->getVariantsCount();
         int userAnswer = getInputInt("Ваш ответ (номер варианта): ", 1, variantsCount) - 1;
 
         if (questions[i]->checkAnswer(userAnswer)) {
-            cout << "✓ Правильно! +" << questions[i]->getScores() << " баллов" << endl;
+            std::cout << "✓ Правильно! +" << questions[i]->getScores() << " баллов" << std::endl;
             totalScore += questions[i]->getScores();
         } else {
-            cout << "✗ Неправильно!" << endl;
+            std::cout << "✗ Неправильно!" << std::endl;
         }
 
         maxScore += questions[i]->getScores();
@@ -257,25 +255,25 @@ void Test::takeTest() {
     Result result(fio, faculty, groupNum, date, testName, percentage);
     addResult(result);
 
-    cout << "\n=== РЕЗУЛЬТАТ ТЕСТА ===" << endl;
-    cout << "Набрано баллов: " << totalScore << " из " << maxScore << endl;
-    cout << "Процент выполнения: " << fixed << setprecision(1) << percentage << "%" << endl;
-    cout << "Статус: " << (percentage >= 60.0f ? "Сдал" : "Не сдал") << endl;
+    std::cout << "\n=== РЕЗУЛЬТАТ ТЕСТА ===" << std::endl;
+    std::cout << "Набрано баллов: " << totalScore << " из " << maxScore << std::endl;
+    std::cout << "Процент выполнения: " << std::fixed << std::setprecision(1) << percentage << "%" << std::endl;
+    std::cout << "Статус: " << (percentage >= 60.0f ? "Сдал" : "Не сдал") << std::endl;
 }
 
 void Test::displayResults() const {
     if (resultCount == 0) {
-        cout << "Результатов пока нет!" << endl;
+        std::cout << "Результатов пока нет!" << std::endl;
         return;
     }
 
-    cout << "\n=== РЕЗУЛЬТАТЫ ТЕСТА: " << testName << " ===" << endl;
-    cout << left << setw(25) << "ФИО"
-         << setw(15) << "Факультет"
-         << setw(8) << "Группа"
-         << setw(10) << "Результат"
-         << setw(10) << "Статус" << endl;
-    cout << string(68, '-') << endl;
+    std::cout << "\n=== РЕЗУЛЬТАТЫ ТЕСТА: " << testName << " ===" << std::endl;
+    std::cout << std::left << std::setw(25) << "ФИО"
+              << std::setw(15) << "Факультет"
+              << std::setw(8) << "Группа"
+              << std::setw(10) << "Результат"
+              << std::setw(10) << "Статус" << std::endl;
+    std::cout << std::string(68, '-') << std::endl;
 
     for (int i = 0; i < resultCount; i++) {
         results[i].display();
@@ -284,11 +282,11 @@ void Test::displayResults() const {
 
 void Test::displayResultsTable() const {
     if (resultCount == 0) {
-        cout << "Результатов пока нет!" << endl;
+        std::cout << "Результатов пока нет!" << std::endl;
         return;
     }
 
-    cout << "\n=== РЕЗУЛЬТАТЫ ТЕСТА: " << testName << " ===" << endl;
+    std::cout << "\n=== РЕЗУЛЬТАТЫ ТЕСТА: " << testName << " ===" << std::endl;
 
     Result::displayTableHeader();
 
@@ -297,39 +295,38 @@ void Test::displayResultsTable() const {
     }
 
     Result::displayTableFooter();
-    cout << "Всего результатов: " << resultCount << endl;
+    std::cout << "Всего результатов: " << resultCount << std::endl;
 }
 
 void Test::saveResultsToFile() const {
     if (resultCount == 0) {
-        cout << "Нет результатов для сохранения!" << endl;
+        std::cout << "Нет результатов для сохранения!" << std::endl;
         return;
     }
 
-    string filename = testName + "_results.txt";
-
-    ofstream file(filename);
+    std::string filename = testName + "_results.txt";
+    std::ofstream file(filename);
     if (!file.is_open()) {
-        cout << "Ошибка: не удалось создать файл " << filename << endl;
+        std::cout << "Ошибка: не удалось создать файл " << filename << std::endl;
         return;
     }
 
-    file << "ОТЧЕТ О РЕЗУЛЬТАТАХ ТЕСТИРОВАНИЯ" << endl;
-    file << "Дата создания отчета: " << getCurrentDate() << endl;
-    file << "Тест: " << testName << endl;
-    file << "Тема: " << testTheme << endl;
-    file << "Всего результатов: " << resultCount << endl;
-    file << endl;
+    file << "ОТЧЕТ О РЕЗУЛЬТАТАХ ТЕСТИРОВАНИЯ" << std::endl;
+    file << "Дата создания отчета: " << getCurrentDate() << std::endl;
+    file << "Тест: " << testName << std::endl;
+    file << "Тема: " << testTheme << std::endl;
+    file << "Всего результатов: " << resultCount << std::endl;
+    file << std::endl;
 
-    file << "+----+---------------------+-------------+--------+----------+--------+" << endl;
-    file << "| №  | ФИО                 | Факультет   | Группа | Результат| Статус |" << endl;
-    file << "+----+---------------------+-------------+--------+----------+--------+" << endl;
+    file << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
+    file << "| №  | ФИО                 | Факультет   | Группа | Результат| Статус |" << std::endl;
+    file << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
 
     for (int i = 0; i < resultCount; i++) {
         results[i].saveToFile(file, i + 1);
     }
 
-    file << "+----+---------------------+-------------+--------+----------+--------+" << endl;
+    file << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
 
     int passedCount = 0;
     float averageResult = 0;
@@ -341,11 +338,11 @@ void Test::saveResultsToFile() const {
     }
     averageResult /= resultCount;
 
-    file << endl << "СТАТИСТИКА:" << endl;
+    file << std::endl << "СТАТИСТИКА:" << std::endl;
     file << "Сдали тест: " << passedCount << " из " << resultCount
-         << " (" << fixed << setprecision(1) << (static_cast<float>(passedCount) / resultCount * 100) << "%)" << endl;
-    file << "Средний результат: " << averageResult << "%" << endl;
+         << " (" << std::fixed << std::setprecision(1) << (static_cast<float>(passedCount) / resultCount * 100) << "%)" << std::endl;
+    file << "Средний результат: " << averageResult << "%" << std::endl;
 
     file.close();
-    cout << "Результаты успешно сохранены в файл: " << filename << endl;
+    std::cout << "Результаты успешно сохранены в файл: " << filename << std::endl;
 }

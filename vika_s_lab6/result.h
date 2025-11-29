@@ -2,10 +2,8 @@
 #define RESULT_H
 
 #include "answer.h"
-#include <iostream>
 #include <iomanip>
 #include <fstream>
-using namespace std;
 
 class Result : public Answer {
 private:
@@ -14,21 +12,21 @@ private:
 
 public:
     Result();
-    Result(const string& fio, const string& faculty, int groupNum, const string& date,
-           const string& testName, float result);
+    Result(const std::string& fio, const std::string& faculty, int groupNum, const std::string& date,
+           const std::string& testName, float result);
     Result(const Result& copy);
-    ~Result() override;
+    ~Result() override = default;
 
     float getResult() const;
     bool getPassed() const;
 
     void setResult(float newResult);
-
     void display() const;
+
     static void displayTableHeader();
     static void displayTableFooter();
     void displayTableRow(int index) const;
-    void saveToFile(ofstream& file, int index) const;
+    void saveToFile(std::ofstream& file, int index) const;
 };
 
 #endif

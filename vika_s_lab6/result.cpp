@@ -1,15 +1,13 @@
 #include "result.h"
+#include <iostream>
 
 Result::Result() : result(0), passed(false) {}
 
-Result::Result(const string& fio, const string& faculty, int groupNum, const string& date,
-       const string& testName, float result)
+Result::Result(const std::string& fio, const std::string& faculty, int groupNum, const std::string& date,
+               const std::string& testName, float result)
     : Answer(fio, faculty, groupNum, date, testName), result(result), passed(result >= 60.0f) {}
 
-Result::Result(const Result& copy) 
-    : Answer(copy), result(copy.result), passed(copy.passed) {}
-
-Result::~Result() = default;
+Result::Result(const Result& copy) : Answer(copy), result(copy.result), passed(copy.passed) {}
 
 float Result::getResult() const { return result; }
 bool Result::getPassed() const { return passed; }
@@ -20,47 +18,47 @@ void Result::setResult(float newResult) {
 }
 
 void Result::display() const {
-    cout << left << setw(25) << getFio()
-         << setw(15) << getFaculty()
-         << setw(8) << getGroupNum()
-         << setw(10) << fixed << setprecision(1) << result << "%"
-         << setw(10) << (passed ? "Сдал" : "Не сдал") << endl;
+    std::cout << std::left << std::setw(25) << getFio()
+              << std::setw(15) << getFaculty()
+              << std::setw(8) << getGroupNum()
+              << std::setw(10) << std::fixed << std::setprecision(1) << result << "%"
+              << std::setw(10) << (passed ? "Сдал" : "Не сдал") << std::endl;
 }
 
 void Result::displayTableHeader() {
-    cout << "+----+---------------------+-------------+--------+----------+--------+" << endl;
-    cout << "| №  | ФИО                 | Факультет   | Группа | Результат| Статус |" << endl;
-    cout << "+----+---------------------+-------------+--------+----------+--------+" << endl;
+    std::cout << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
+    std::cout << "| №  | ФИО                 | Факультет   | Группа | Результат| Статус |" << std::endl;
+    std::cout << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
 }
 
 void Result::displayTableFooter() {
-    cout << "+----+---------------------+-------------+--------+----------+--------+" << endl;
+    std::cout << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
 }
 
 void Result::displayTableRow(int index) const {
-    string shortFio = getFio();
+    std::string shortFio = getFio();
     if (shortFio.length() > 19) {
         shortFio = shortFio.substr(0, 16) + "...";
     }
 
-    string shortFaculty = getFaculty();
+    std::string shortFaculty = getFaculty();
     if (shortFaculty.length() > 11) {
         shortFaculty = shortFaculty.substr(0, 8) + "...";
     }
 
-    cout << "| " << setw(2) << right << index << " | "
-         << setw(19) << left << shortFio << " | "
-         << setw(11) << left << shortFaculty << " | "
-         << setw(6) << right << getGroupNum() << " | "
-         << setw(8) << right << fixed << setprecision(1) << result << "% | "
-         << setw(6) << left << (passed ? "Сдал" : "Не сдал") << " |" << endl;
+    std::cout << "| " << std::setw(2) << std::right << index << " | "
+              << std::setw(19) << std::left << shortFio << " | "
+              << std::setw(11) << std::left << shortFaculty << " | "
+              << std::setw(6) << std::right << getGroupNum() << " | "
+              << std::setw(8) << std::right << std::fixed << std::setprecision(1) << result << "% | "
+              << std::setw(6) << std::left << (passed ? "Сдал" : "Не сдал") << " |" << std::endl;
 }
 
-void Result::saveToFile(ofstream& file, int index) const {
-    file << "| " << setw(2) << right << index << " | "
-         << setw(19) << left << getFio() << " | "
-         << setw(11) << left << getFaculty() << " | "
-         << setw(6) << right << getGroupNum() << " | "
-         << setw(8) << right << fixed << setprecision(1) << result << "% | "
-         << setw(6) << left << (passed ? "Сдал" : "Не сдал") << " |" << endl;
+void Result::saveToFile(std::ofstream& file, int index) const {
+    file << "| " << std::setw(2) << std::right << index << " | "
+         << std::setw(19) << std::left << getFio() << " | "
+         << std::setw(11) << std::left << getFaculty() << " | "
+         << std::setw(6) << std::right << getGroupNum() << " | "
+         << std::setw(8) << std::right << std::fixed << std::setprecision(1) << result << "% | "
+         << std::setw(6) << std::left << (passed ? "Сдал" : "Не сдал") << " |" << std::endl;
 }
