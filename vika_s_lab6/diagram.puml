@@ -1,130 +1,176 @@
 @startuml
-
-!define CLASS class
-!define PROTECTED #protected
-!define PRIVATE #private
-!define PUBLIC #public
+!theme plain
 
 skinparam class {
-  BackgroundColor White
-  BorderColor Black
-  ArrowColor Black
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
 }
 
-skinparam shadowing false
-
-CLASS User {
-  {field} PROTECTED fio : string
-  {field} PROTECTED faculty : string
-  {field} PROTECTED groupNum : int
-
-  {method} PUBLIC User()
-  {method} PUBLIC User(string, string, int)
-  {method} PUBLIC User(const User&)
-  {method} PUBLIC getFio() : string
-  {method} PUBLIC getFaculty() : string
-  {method} PUBLIC getGroupNum() : int
-  {method} PUBLIC setFio(const string&) : void
-  {method} PUBLIC setFaculty(const string&) : void
-  {method} PUBLIC setGroupNum(int) : void
+skinparam package {
+    BackgroundColor White
+    BorderColor Black
 }
 
-CLASS Answer {
-  {field} PROTECTED date : int
+title Классовая диаграмма системы тестирования
 
-  {method} PUBLIC Answer()
-  {method} PUBLIC Answer(const string&, const string&, int, int)
-  {method} PUBLIC Answer(const Answer&)
-  {method} PUBLIC getDate() : int
-  {method} PUBLIC setDate(int) : void
+package "Пользователи и ответы" {
+  class User {
+    - fio: string
+    - faculty: string
+    - groupNum: int
+    --
+    + User()
+    + User(fio, faculty, groupNum)
+    + User(copy: User)
+    + ~User()
+    + getFio(): string
+    + getFaculty(): string
+    + getGroupNum(): int
+    + setFio(newFio: string): void
+    + setFaculty(newFaculty: string): void
+    + setGroupNum(newGroupNum: int): void
+  }
+
+  class Answer {
+    - date: string
+    - testName: string
+    --
+    + Answer()
+    + Answer(fio, faculty, groupNum, date, testName)
+    + Answer(copy: Answer)
+    + ~Answer()
+    + getDate(): string
+    + getTestName(): string
+    + setDate(newDate: string): void
+    + setTestName(newTestName: string): void
+  }
+
+  class Result {
+    - result: float
+    - passed: bool
+    --
+    + Result()
+    + Result(fio, faculty, groupNum, date, testName, result)
+    + Result(copy: Result)
+    + ~Result()
+    + getResult(): float
+    + getPassed(): bool
+    + setResult(newResult: float): void
+    + display(): void
+    + displayTableHeader(): static void
+    + displayTableFooter(): static void
+    + displayTableRow(index: int): void
+    + saveToFile(file: ofstream, index: int): void
+  }
 }
 
-CLASS Question {
-  {field} PRIVATE questionText : string
-  {field} PRIVATE variants : string
-  {field} PRIVATE rightVariant : string
-  {field} PRIVATE scores : int
+package "Вопросы" {
+  interface IQuestion {
+    + ~IQuestion()
+    + displayQuestion(): void
+    + checkAnswer(userAnswer: int): bool
+    + getScores(): int
+    + getType(): string
+    + getQuestionText(): string
+    + getVariantsCount(): int
+  }
 
-  {method} PUBLIC Question()
-  {method} PUBLIC Question(string, string, string, int)
-  {method} PUBLIC Question(const Question&)
-  {method} PUBLIC getQuestionText() : string
-  {method} PUBLIC getVariants() : string
-  {method} PUBLIC getRightVariant() : string
-  {method} PUBLIC getScores() : int
-  {method} PUBLIC setQuestionText(string&&) : void
-  {method} PUBLIC setVariants(const string&) : void
-  {method} PUBLIC setRightVariant(const string&) : void
-  {method} PUBLIC setScores(int) : void
+  class "Question<TQuestion, TVariants>" as Question {
+    - MAX_VARIANTS: static const int
+    - questionText: TQuestion
+    - variants: TVariants[]
+    - variantsCount: int
+    - rightVariantNumber: int
+    - scores: int
+    - typeName: string
+    --
+    + Question()
+    + Question(questionText, variantsArray, varCount, rightVariant, scores, type)
+    + Question(copy: Question)
+    + ~Question()
+    + getQuestionText(): string
+    + getVariantsCount(): int
+    + getVariant(index: int): TVariants
+    + getRightVariantNumber(): int
+    + getScores(): int
+    + getType(): string
+    + setQuestionText(newQuestionText: TQuestion): void
+    + setVariants(newVariants: TVariants[], count: int): void
+    + setRightVariantNumber(newRightVariantNumber: int): void
+    + setScores(newScores: int): void
+    + checkAnswer(userAnswer: int): bool
+    + displayQuestion(): void
+  }
 }
 
-CLASS Result {
-  {field} PRIVATE result : float
-  {field} PRIVATE passed : bool
-
-  {method} PUBLIC Result()
-  {method} PUBLIC Result(const string&, const string&, int, int, float)
-  {method} PUBLIC Result(const Result&)
-  {method} PUBLIC getResult() : float
-  {method} PUBLIC getPassed() : bool
-  {method} PUBLIC setResult(float) : void
-  {method} PUBLIC setPassed(bool) : void
-}
-
-CLASS Test {
-  {field} PRIVATE MAX_QUESTIONS : static const int = 100
-  {field} PRIVATE MAX_ANSWERS : static const int = 1000
-  {field} PRIVATE testName : string
-  {field} PRIVATE testTheme : string
-  {field} PRIVATE questions : Question[MAX_QUESTIONS]
-  {field} PRIVATE answers : Answer[MAX_ANSWERS]
-  {field} PRIVATE questionCount : int
-  {field} PRIVATE answerCount : int
-
-  {method} PUBLIC Test()
-  {method} PUBLIC Test(string, string)
-  {method} PUBLIC Test(const Test&)
-  {method} PUBLIC getTestName() : string
-  {method} PUBLIC getTestTheme() : string
-  {method} PUBLIC getQuestionCount() : int
-  {method} PUBLIC getAnswerCount() : int
-  {method} PUBLIC setTestName(string) : void
-  {method} PUBLIC setTestTheme(string) : void
-  {method} PUBLIC setQuestionCount(int) : void
-  {method} PUBLIC setAnswerCount(int) : void
+package "Тестирование" {
+  class Test {
+    - MAX_QUESTIONS: static const int
+    - MAX_ANSWERS: static const int
+    - MAX_RESULTS: static const int
+    - MAX_VARIANTS: static const int
+    - testName: string
+    - testTheme: string
+    - questions: IQuestion*[]
+    - answers: Answer[]
+    - results: Result[]
+    - questionCount: int
+    - answerCount: int
+    - resultCount: int
+    --
+    + Test()
+    + Test(name: string, theme: string)
+    + Test(other: Test)
+    + operator=(other: Test): Test&
+    + ~Test()
+    + getTestName(): string
+    + getTestTheme(): string
+    + getQuestionCount(): int
+    + getAnswerCount(): int
+    + getResultCount(): int
+    + setTestName(name: string): void
+    + setTestTheme(theme: string): void
+    + addQuestion(question: IQuestion*): bool
+    + addAnswer(answer: Answer): bool
+    + addResult(result: Result): bool
+    + displayTestInfo(): void
+    + showMenu(): void
+    - addTextQuestion(): void
+    - addNumericQuestion(): void
+    - displayAllQuestions(): void
+    - takeTest(): void
+    - displayResults(): void
+    - displayResultsTable(): void
+    - saveResultsToFile(): void
+  }
 }
 
 ' Наследование
-Answer --|> User
-Result --|> Answer
+User <|-- Answer
+Answer <|-- Result
+IQuestion <|.. Question
 
-' Композиция (Test содержит Questions и Answers)
-Test *-- "many" Question : questions
-Test *-- "many" Answer : answers
+' Композиция и агрегация
+Test *-- "0..*" IQuestion
+Test *-- "0..*" Answer
+Test *-- "0..*" Result
 
-' Ассоциации
-Test --> "0..*" Result : produces
-Answer --> "1..*" Question : answers to
+' Зависимости
+Test ..> User
+Test ..> Result
+Test ..> IQuestion
 
-note top of Test
-  Содержит массивы вопросов и ответов
-  MAX_QUESTIONS = 100
-  MAX_ANSWERS = 1000
+note right of Test
+  Управляет всем процессом
+  тестирования: создание вопросов,
+  проведение тестов, сбор результатов
 end note
 
-note right of User
-  Базовый класс для информации
-  о пользователе
-end note
-
-note right of Answer
-  Наследует от User
-  Добавляет дату выполнения теста
-end note
-
-note right of Result
-  Наследует от Answer
-  Добавляет результат и статус сдачи
+note right of Question
+  Шаблонный класс
+  TQuestion - тип вопроса
+  TVariants - тип вариантов ответов
 end note
 
 @enduml

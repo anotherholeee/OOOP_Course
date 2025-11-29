@@ -8,9 +8,7 @@ add_executable(vika_s_lab6 main.cpp
         user.h
         answer.cpp
         answer.h
-        iquestion.cpp
         iquestion.h
-        question.cpp
         question.h
         result.cpp
         result.h
