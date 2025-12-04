@@ -1,15 +1,21 @@
 @startuml TestingSystem
 
-' Настройки
-skinparam class {
-    BackgroundColor White
-    BorderColor Black
-    ArrowColor Black
-}
-skinparam package {
-    BackgroundColor LightGray
-    BorderColor DarkGray
-}
+' Применение параметров
+skinparam linetype ortho
+skinparam classRoundCorner 0
+skinparam classBorderThickness 2
+skinparam classFontName "Times New Roman"
+skinparam classFontSize 14
+skinparam classFontStyle normal
+skinparam classFontColor black
+skinparam classAttributeIconSize 0
+skinparam classBorderColor black
+skinparam classBackgroundColor white
+skinparam classArrowColor black
+skinparam classAbstractFontStyle italic
+skinparam classAbstractFontColor black
+skinparam classAbstractUnderline true
+skinparam inheritanceArrowColor black
 hide circle
 
 ' Пакет Core Entities

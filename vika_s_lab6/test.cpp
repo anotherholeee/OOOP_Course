@@ -145,18 +145,23 @@ void Test::addTextQuestion() {
 
     std::cout << "\n--- Текстовый вопрос ---" << std::endl;
 
-    auto questionText = getInput<std::string>("Введите текст вопроса: ");
+    // Используем проверку для текста без цифр
+    std::string questionText;
+    do {
+        questionText = getInputText("Введите текст вопроса (без цифр): ");
+    } while (questionText.empty());
 
     std::string variants[MAX_VARIANTS];
     int variantsCount = 4;
 
-    std::cout << "Введите 4 варианта ответов:" << std::endl;
+    std::cout << "Введите 4 текстовых варианта ответов (без цифр):" << std::endl;
     for (int i = 0; i < variantsCount; i++) {
-        variants[i] = getInput<std::string>("Вариант " + std::to_string(i+1) + ": ");
+        std::string prompt = "Вариант " + std::to_string(i+1) + " (без цифр): ";
+        variants[i] = getInputText(prompt);
     }
 
     int rightAnswer = getInputInt("Номер правильного ответа (1-4): ", 1, 4) - 1;
-    int scores = getInputInt("Баллы за вопрос: ", 0, 100);
+    int scores = getInputInt("Баллы за вопрос (0-100): ", 0, 100);
 
     IQuestion* question = new Question<std::string, std::string>(
         questionText, variants, variantsCount, rightAnswer, scores, "Текстовый"
@@ -178,20 +183,34 @@ void Test::addNumericQuestion() {
 
     std::cout << "\n--- Числовой вопрос ---" << std::endl;
 
+    // Для текста вопроса можно использовать обычный ввод
     auto questionText = getInput<std::string>("Введите текст вопроса: ");
 
-    int variants[MAX_VARIANTS];
+    // Массив для числовых вариантов (как int)
+    int intVariants[MAX_VARIANTS];
     int variantsCount = 4;
 
-    std::cout << "Введите 4 числовых варианта ответов:" << std::endl;
+    std::cout << "Введите 4 числовых варианта ответов (целые числа, могут быть отрицательными):" << std::endl;
     for (int i = 0; i < variantsCount; i++) {
-variants[i] = getInputInt("Вариант " + std::to_string(i+1) + ": ", -1000000, 1000000);    }
+        std::string prompt = "Вариант " + std::to_string(i+1) + " (целое число): ";
+        std::string numericStr = getInputIntegerString(prompt);
+
+        try {
+            intVariants[i] = std::stoi(numericStr);
+        } catch (const std::out_of_range&) {
+            std::cout << "Ошибка: число слишком большое. Установлено значение 0." << std::endl;
+            intVariants[i] = 0;
+        } catch (...) {
+            std::cout << "Ошибка преобразования числа. Установлено значение 0." << std::endl;
+            intVariants[i] = 0;
+        }
+    }
 
     int rightAnswer = getInputInt("Номер правильного ответа (1-4): ", 1, 4) - 1;
-    int scores = getInputInt("Баллы за вопрос: ", 0, 100);
+    int scores = getInputInt("Баллы за вопрос (0-100): ", 0, 100);
 
     IQuestion* question = new Question<std::string, int>(
-        questionText, variants, variantsCount, rightAnswer, scores, "Числовой"
+        questionText, intVariants, variantsCount, rightAnswer, scores, "Числовой"
     );
 
     if (addQuestion(question)) {
@@ -235,10 +254,16 @@ void Test::takeTest() {
     int maxScore = 0;
 
     for (int i = 0; i < questionCount; i++) {
-        std::cout << "\n--- Вопрос " << (i + 1) << " ---" << std::endl;
+        std::cout << "\n--- Вопрос " << (i + 1) << " [" << questions[i]->getType() << "] ---" << std::endl;
         questions[i]->displayQuestion();
 
         int variantsCount = questions[i]->getVariantsCount();
+
+        // Для числовых вопросов можно добавить специальную подсказку
+        if (questions[i]->getType() == "Числовой") {
+            std::cout << "Вводите только цифры!" << std::endl;
+        }
+
         int userAnswer = getInputInt("Ваш ответ (номер варианта): ", 1, variantsCount) - 1;
 
         if (questions[i]->checkAnswer(userAnswer)) {
