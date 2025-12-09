@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-// Предварительные объявления
+
 class IQuestion;
 class Answer;
 class Result;

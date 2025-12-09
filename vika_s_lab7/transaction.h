@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-// Предварительное объявление класса Answer
+
 class Answer;
 
 class AnswerState {

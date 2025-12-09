@@ -12,7 +12,7 @@ private:
 
 public:
     Result();
-    Result(const std::string& fio, const std::string& faculty, int groupNum, 
+    Result(const std::string& fio, const std::string& faculty, int groupNum,
            const std::string& date, const std::string& testName, float result);
     Result(const Result& copy);
     ~Result() override = default;
@@ -23,10 +23,17 @@ public:
     void setResult(float newResult);
     void display() const;
 
-    static void displayTableHeader();
-    static void displayTableFooter();
-    void displayTableRow(int index) const;
-    void saveToFile(std::ofstream& file, int index) const;
+
+    static void printTableTop();
+    static void printTableHeader();
+    static void printTableBottom();
+    void printTableRow(int index) const;
+    void saveToFileTable(std::ofstream& file, int index) const;
+
+private:
+
+    static std::string formatFioForTable(const std::string& fio);
+    static std::string formatFacultyForTable(const std::string& faculty);
 };
 
 #endif

@@ -283,16 +283,9 @@ void Test::displayResults() const {
     }
 
     std::cout << "\n=== РЕЗУЛЬТАТЫ ТЕСТА: " << testName << " ===" << std::endl;
-    std::cout << std::left << std::setw(25) << "ФИО"
-              << std::setw(15) << "Факультет"
-              << std::setw(8) << "Группа"
-              << std::setw(10) << "Результат"
-              << std::setw(10) << "Статус" << std::endl;
-    std::cout << std::string(68, '-') << std::endl;
 
-    for (const auto& result : results) {
-        result->display();
-    }
+
+    displayResultsTable();
 }
 
 void Test::displayResultsTable() const {
@@ -302,11 +295,19 @@ void Test::displayResultsTable() const {
     }
 
     std::cout << "\n=== РЕЗУЛЬТАТЫ ТЕСТА: " << testName << " ===" << std::endl;
+    std::cout << "Всего результатов: " << results.size() << std::endl;
 
-    Result::displayTableHeader();
+
+    Result::printTableTop();
+
+
+    Result::printTableHeader();
+
+
+    Result::printTableBottom();
 
     for (size_t i = 0; i < results.size(); i++) {
-        // Ищем соответствующий ответ для этого результата
+
         std::string fio = results[i]->getFio();
         std::string faculty = results[i]->getFaculty();
         int group = results[i]->getGroupNum();
@@ -315,14 +316,14 @@ void Test::displayResultsTable() const {
         float resultValue = results[i]->getResult();
         bool passed = results[i]->getPassed();
 
-        // Проверяем, есть ли обновленные данные в ответах
+
         for (const auto& answer : answers) {
             if (answer->getFio() == fio &&
                 answer->getFaculty() == faculty &&
                 answer->getGroupNum() == group &&
                 answer->getDate() == date &&
                 answer->getTestName() == testName) {
-                // Используем обновленные данные из ответа
+
                 fio = answer->getFio();
                 faculty = answer->getFaculty();
                 group = answer->getGroupNum();
@@ -332,27 +333,27 @@ void Test::displayResultsTable() const {
             }
         }
 
-        // Выводим строку таблицы с обновленными данными
-        std::string shortFio = fio;
-        if (shortFio.length() > 19) {
-            shortFio = shortFio.substr(0, 16) + "...";
+
+        std::string formattedFio = fio;
+        if (formattedFio.length() > 20) {
+            formattedFio = formattedFio.substr(0, 17) + "...";
         }
 
-        std::string shortFaculty = faculty;
-        if (shortFaculty.length() > 11) {
-            shortFaculty = shortFaculty.substr(0, 8) + "...";
+        std::string formattedFaculty = faculty;
+        if (formattedFaculty.length() > 15) {
+            formattedFaculty = formattedFaculty.substr(0, 12) + "...";
         }
 
         std::cout << "| " << std::setw(2) << std::right << (i + 1) << " | "
-                  << std::setw(19) << std::left << shortFio << " | "
-                  << std::setw(11) << std::left << shortFaculty << " | "
+                  << std::setw(20) << std::left << formattedFio << " | "
+                  << std::setw(15) << std::left << formattedFaculty << " | "
                   << std::setw(6) << std::right << group << " | "
                   << std::setw(8) << std::right << std::fixed << std::setprecision(1) << resultValue << "% | "
                   << std::setw(6) << std::left << (passed ? "Сдал" : "Не сдал") << " |" << std::endl;
     }
 
-    Result::displayTableFooter();
-    std::cout << "Всего результатов: " << results.size() << std::endl;
+
+    Result::printTableBottom();
 }
 
 void Test::saveResultsToFile() const {
@@ -375,12 +376,13 @@ void Test::saveResultsToFile() const {
     file << "Всего результатов: " << results.size() << std::endl;
     file << std::endl;
 
-    file << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
-    file << "| №  | ФИО                 | Факультет   | Группа | Результат| Статус |" << std::endl;
-    file << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
+
+    file << "+----+----------------------+-----------------+--------+----------+--------+" << std::endl;
+    file << "| №  | ФИО                  | Факультет       | Группа | Результат| Статус |" << std::endl;
+    file << "+----+----------------------+-----------------+--------+----------+--------+" << std::endl;
 
     for (size_t i = 0; i < results.size(); i++) {
-        // Ищем соответствующий ответ для этого результата
+
         std::string fio = results[i]->getFio();
         std::string faculty = results[i]->getFaculty();
         int group = results[i]->getGroupNum();
@@ -389,14 +391,14 @@ void Test::saveResultsToFile() const {
         float resultValue = results[i]->getResult();
         bool passed = results[i]->getPassed();
 
-        // Проверяем, есть ли обновленные данные в ответах
+
         for (const auto& answer : answers) {
             if (answer->getFio() == fio &&
                 answer->getFaculty() == faculty &&
                 answer->getGroupNum() == group &&
                 answer->getDate() == date &&
                 answer->getTestName() == testName) {
-                // Используем обновленные данные из ответа
+
                 fio = answer->getFio();
                 faculty = answer->getFaculty();
                 group = answer->getGroupNum();
@@ -406,15 +408,26 @@ void Test::saveResultsToFile() const {
             }
         }
 
+
+        std::string formattedFio = fio;
+        if (formattedFio.length() > 20) {
+            formattedFio = formattedFio.substr(0, 17) + "...";
+        }
+
+        std::string formattedFaculty = faculty;
+        if (formattedFaculty.length() > 15) {
+            formattedFaculty = formattedFaculty.substr(0, 12) + "...";
+        }
+
         file << "| " << std::setw(2) << std::right << (i + 1) << " | "
-             << std::setw(19) << std::left << fio << " | "
-             << std::setw(11) << std::left << faculty << " | "
+             << std::setw(20) << std::left << formattedFio << " | "
+             << std::setw(15) << std::left << formattedFaculty << " | "
              << std::setw(6) << std::right << group << " | "
              << std::setw(8) << std::right << std::fixed << std::setprecision(1) << resultValue << "% | "
              << std::setw(6) << std::left << (passed ? "Сдал" : "Не сдал") << " |" << std::endl;
     }
 
-    file << "+----+---------------------+-------------+--------+----------+--------+" << std::endl;
+    file << "+----+----------------------+-----------------+--------+----------+--------+" << std::endl;
 
     int passedCount = 0;
     float averageResult = 0;
@@ -457,7 +470,7 @@ void Test::manageTransactions() {
     
     Answer& selectedAnswer = *answers[choice];
     
-    // Находим соответствующий результат для этого ответа
+
     std::unique_ptr<Result>* correspondingResult = nullptr;
     for (auto& result : results) {
         if (result->getFio() == selectedAnswer.getFio() &&
@@ -554,9 +567,9 @@ void Test::manageTransactions() {
             case 8:
                 selectedAnswer.commitAllChanges();
 
-                // Обновляем соответствующий результат с новыми данными
+
                 if (correspondingResult) {
-                    // Создаем новый результат с обновленными данными и старым процентом
+
                     float oldResult = (*correspondingResult)->getResult();
                     auto newResult = std::make_unique<Result>(
                         selectedAnswer.getFio(),
@@ -567,7 +580,7 @@ void Test::manageTransactions() {
                         oldResult
                     );
 
-                    // Заменяем старый результат новым
+
                     *correspondingResult = std::move(newResult);
                     std::cout << "Все изменения сохранены и результат обновлен!" << std::endl;
                 } else {

@@ -1,5 +1,5 @@
 #include "transaction.h"
-#include "answer.h"  // Теперь здесь, чтобы избежать циклической зависимости
+#include "answer.h"
 
 AnswerState::AnswerState(const Answer& answer) 
     : fio(answer.getFio()),

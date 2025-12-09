@@ -6,7 +6,7 @@
 #include <string>
 #include <memory>
 
-// Объявление класса Answer
+
 class Answer : public User {
 protected:
     std::string date;
@@ -26,14 +26,14 @@ public:
     void setDate(const std::string& newDate);
     void setTestName(const std::string& newTestName);
 
-    // Методы для работы с историей изменений
+
     void saveCurrentState();
     bool undoLastChange();
     void commitAllChanges();
     bool hasUnsavedChanges() const;
     int getChangeHistorySize() const;
 
-    // Методы из User, которые нам нужны
+
     using User::setFio;
     using User::setFaculty;
     using User::setGroupNum;

@@ -1,0 +1,181 @@
+@startuml
+!theme plain
+
+skinparam linetype ortho
+skinparam classRoundCorner 0
+skinparam classBorderThickness 2
+skinparam classFontName "Times New Roman"
+skinparam classFontSize 14
+skinparam classFontStyle normal
+skinparam classFontColor black
+skinparam classAttributeIconSize 0
+skinparam classBorderColor black
+skinparam classBackgroundColor white
+skinparam classArrowColor black
+skinparam classAbstractFontStyle italic
+skinparam classAbstractFontColor black
+skinparam classAbstractUnderline true
+skinparam inheritanceArrowColor black
+hide circle
+
+' ========== Классы ==========
+class Test {
+  - testName: string
+  - testTheme: string
+  - questions: vector<unique_ptr<IQuestion>>
+  - answers: vector<unique_ptr<Answer>>
+  - results: vector<unique_ptr<Result>>
+  + Test()
+  + Test(name: string, theme: string)
+  + Test(other: const Test&)
+  + operator=(other: const Test&): Test&
+  + getTestName(): string
+  + getTestTheme(): string
+  + getQuestionCount(): int
+  + getAnswerCount(): int
+  + getResultCount(): int
+  + setTestName(name: const string&)
+  + setTestTheme(theme: const string&)
+  + addQuestion(question: unique_ptr<IQuestion>): bool
+  + addAnswer(answer: unique_ptr<Answer>): bool
+  + addResult(result: unique_ptr<Result>): bool
+  + displayTestInfo(): void
+  + showMenu(): void
+  {static} - MAX_QUESTIONS: int = 50
+  {static} - MAX_ANSWERS: int = 100
+  {static} - MAX_RESULTS: int = 100
+  {static} - MAX_VARIANTS: int = 10
+}
+
+abstract class IQuestion {
+  {abstract} + displayQuestion(): void
+  {abstract} + checkAnswer(userAnswer: int): bool
+  {abstract} + getScores(): int
+  {abstract} + getType(): string
+  {abstract} + getQuestionText(): string
+  {abstract} + getVariantsCount(): int
+  {abstract} + clone(): unique_ptr<IQuestion>
+}
+
+class Question<TQuestion, TVariants> {
+  - questionText: TQuestion
+  - variants: TVariants[MAX_VARIANTS]
+  - variantsCount: int
+  - rightVariantNumber: int
+  - scores: int
+  - typeName: string
+  + Question()
+  + Question(questionText: TQuestion, variantsArray: const TVariants*, varCount: int, rightVariant: int, scores: int, type: string)
+  + Question(copy: const Question&)
+  + getQuestionText(): string
+  + getVariantsCount(): int
+  + getVariant(index: int): TVariants
+  + getRightVariantNumber(): int
+  + getScores(): int
+  + getType(): string
+  + clone(): unique_ptr<IQuestion>
+  + setQuestionText(newQuestionText: const TQuestion&)
+  + setVariants(newVariants: const TVariants*, count: int)
+  + setRightVariantNumber(newRightVariantNumber: int)
+  + setScores(newScores: int)
+  + checkAnswer(userAnswer: int): bool
+  + displayQuestion(): void
+  {static} - MAX_VARIANTS: int = 10
+}
+
+class User {
+  # fio: string
+  # faculty: string
+  # groupNum: int
+  + User()
+  + User(fio: string, faculty: string, groupNum: int)
+  + User(copy: const User&)
+  + ~User()
+  + getFio(): string
+  + getFaculty(): string
+  + getGroupNum(): int
+  + setFio(newFio: const string&)
+  + setFaculty(newFaculty: const string&)
+  + setGroupNum(newGroupNum: int)
+}
+
+class Answer {
+  # date: string
+  # testName: string
+  # history: unique_ptr<TransactionHistory>
+  + Answer()
+  + Answer(fio: string, faculty: const string&, groupNum: int, date: string, testName: string)
+  + Answer(copy: const Answer&)
+  + ~Answer()
+  + getDate(): string
+  + getTestName(): string
+  + setDate(newDate: const string&)
+  + setTestName(newTestName: const string&)
+  + saveCurrentState(): void
+  + undoLastChange(): bool
+  + commitAllChanges(): void
+  + hasUnsavedChanges(): bool
+  + getChangeHistorySize(): int
+}
+
+class Result {
+  - result: float
+  - passed: bool
+  + Result()
+  + Result(fio: const string&, faculty: const string&, groupNum: int, date: const string&, testName: const string&, result: float)
+  + Result(copy: const Result&)
+  + ~Result()
+  + getResult(): float
+  + getPassed(): bool
+  + setResult(newResult: float)
+  + display(): void
+  {static} + printTableTop(): void
+  {static} + printTableHeader(): void
+  {static} + printTableBottom(): void
+  + printTableRow(index: int): void
+  + saveToFileTable(file: ofstream&, index: int): void
+}
+
+class TransactionHistory {
+  - history: stack<unique_ptr<AnswerState>>
+  - currentAnswer: Answer*
+  + TransactionHistory()
+  + saveState(answer: Answer&): void
+  + commitAll(): void
+  + rollbackLast(): bool
+  + canRollback(): bool
+  + getHistorySize(): int
+}
+
+class AnswerState {
+  - fio: string
+  - faculty: string
+  - groupNum: int
+  - date: string
+  - testName: string
+  + AnswerState(answer: const Answer&)
+  + restore(answer: Answer&): void
+}
+
+' ========== Связи наследования ==========
+User <|-- Answer
+Answer <|-- Result
+IQuestion <|-- Question
+
+' ========== Композиции и агрегации ==========
+Test "1" *-- "*" IQuestion : questions
+Test "1" *-- "*" Answer : answers
+Test "1" *-- "*" Result : results
+
+Answer "1" *-- "1" TransactionHistory : history
+TransactionHistory "1" *-- "*" AnswerState : history
+
+' ========== Зависимости ==========
+AnswerState ..> Answer : restore()
+TransactionHistory ..> Answer : currentAnswer
+Test ..> IQuestion : uses
+Test ..> Answer : uses
+Test ..> Result : uses
+Question ..> IQuestion : implements clone()
+
+@enduml
