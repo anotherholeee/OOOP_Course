@@ -1,0 +1,137 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+
+' Пользовательский класс исключения
+class EmployeeException {
+    +EmployeeException(message: string)
+}
+
+' Базовый класс
+abstract class Employee {
+    #name: string
+    #experience: int
+    #salary: double
+    +Employee(name, experience, salary)
+    +~Employee()
+    +{abstract} getPosition(): string
+    +{abstract} performDuty(): void
+    +getName(): string
+    +getExperience(): int
+    +getSalary(): double
+    +setSalary(newSalary: double): void
+}
+
+' Наследование
+class Conductor {
+    -trainNumber: int
+    +Conductor(name, experience, salary, trainNumber)
+    +~Conductor()
+    +getPosition(): string
+    +performDuty(): void
+    +getTrainNumber(): int
+}
+
+class Engineer {
+    -licenseType: string
+    +Engineer(name, experience, salary, licenseType)
+    +~Engineer()
+    +getPosition(): string
+    +performDuty(): void
+    +getLicenseType(): string
+}
+
+' Композиция
+class TrainCar {
+    -carNumber: int
+    -carType: string
+    -capacity: int
+    +TrainCar(carNumber, carType, capacity)
+    +~TrainCar()
+    +getCarNumber(): int
+    +getCarType(): string
+    +getCapacity(): int
+    +displayInfo(): void
+}
+
+class Train {
+    -trainNumber: int
+    -route: string
+    -cars: vector<unique_ptr<TrainCar>>
+    +Train(trainNumber, route)
+    +~Train()
+    +addCar(car: unique_ptr<TrainCar>): void
+    +removeCar(carNumber: int): void
+    +getTrainNumber(): int
+    +getRoute(): string
+    +getCarCount(): int
+    +displayInfo(): void
+    +{static} createTrainWithException(): Train*
+}
+
+' Агрегация
+class StaffManager {
+    -staff: vector<shared_ptr<Employee>>
+    +StaffManager()
+    +~StaffManager()
+    +addEmployee(employee: shared_ptr<Employee>): void
+    +removeEmployee(name: string): void
+    +getStaff(): vector<shared_ptr<Employee>>
+    +getStaffCount(): int
+    +assembleMinimalStaff(conductorsNeeded, engineersNeeded): void
+    +displayStaff(): void
+}
+
+class Trip {
+    -train: shared_ptr<Train>
+    -staffManager: shared_ptr<StaffManager>
+    -departureTime: string
+    -arrivalTime: string
+    +Trip(train, staffManager, departureTime, arrivalTime)
+    +~Trip()
+    +startTrip(): void
+    +validateTrip(): void
+    +getDepartureTime(): string
+    +getArrivalTime(): string
+    +displayInfo(): void
+}
+
+' Наследование
+Employee <|-- Conductor
+Employee <|-- Engineer
+
+' Композиция (Train владеет TrainCar)
+Train *-- TrainCar : "композиция\n(unique_ptr)"
+
+' Агрегация (StaffManager использует Employee)
+StaffManager o-- Employee : "агрегация\n(shared_ptr)"
+
+' Агрегация (Trip использует Train и StaffManager)
+Trip o-- Train : "агрегация\n(shared_ptr)"
+Trip o-- StaffManager : "агрегация\n(shared_ptr)"
+
+' Исключение может быть выброшено из Employee
+Employee ..> EmployeeException : "throws"
+
+note right of Employee
+  Исключение в конструкторе:
+  - пустое имя
+  - отрицательный опыт
+  - отрицательная зарплата
+end note
+
+note right of Train
+  Исключение с new:
+  createTrainWithException()
+  генерирует bad_alloc
+end note
+
+note right of StaffManager
+  Функционал:
+  - сбор персонала
+  - проверка наличия
+  проводников и машинистов
+end note
+
+@enduml
+

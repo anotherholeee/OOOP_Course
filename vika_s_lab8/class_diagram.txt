@@ -1,0 +1,157 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    ДИАГРАММА КЛАССОВ - ЖЕЛЕЗНОДОРОЖНЫЕ ПАССАЖИРОПЕРЕВОЗКИ   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────┐
+│      EmployeeException               │  (Пользовательский класс исключения)
+│  ─────────────────────────────────   │
+│  +EmployeeException(message)         │
+└─────────────────────────────────────┘
+                    ▲
+                    │ наследуется от
+                    │ std::runtime_error
+                    │
+
+┌─────────────────────────────────────┐
+│         Employee                    │  (Абстрактный базовый класс)
+│  ─────────────────────────────────   │
+│  #name: string                       │
+│  #experience: int                    │
+│  #salary: double                     │
+│  ─────────────────────────────────   │
+│  +Employee(...)                      │  ← Исключение в конструкторе
+│  +~Employee()                        │
+│  +{abstract} getPosition(): string   │
+│  +{abstract} performDuty(): void     │
+│  +getName(): string                  │
+│  +getExperience(): int               │
+│  +getSalary(): double               │
+│  +setSalary(newSalary): void        │
+└─────────────────────────────────────┘
+         ▲                    ▲
+         │                    │
+         │ НАСЛЕДОВАНИЕ       │ НАСЛЕДОВАНИЕ
+         │                    │
+┌────────┴─────────┐  ┌──────┴──────────────┐
+│    Conductor     │  │      Engineer       │
+│  ─────────────   │  │  ────────────────   │
+│  -trainNumber    │  │  -licenseType       │
+│  ─────────────   │  │  ────────────────   │
+│  +Conductor(...) │  │  +Engineer(...)     │
+│  +getPosition()  │  │  +getPosition()     │
+│  +performDuty()  │  │  +performDuty()     │
+└──────────────────┘  └─────────────────────┘
+
+
+┌─────────────────────────────────────┐
+│         TrainCar                    │
+│  ─────────────────────────────────   │
+│  -carNumber: int                    │
+│  -carType: string                   │
+│  -capacity: int                     │
+│  ─────────────────────────────────   │
+│  +TrainCar(...)                     │
+│  +~TrainCar()                       │
+│  +getCarNumber(): int               │
+│  +displayInfo(): void               │
+└─────────────────────────────────────┘
+         ▲
+         │
+         │ КОМПОЗИЦИЯ (unique_ptr)
+         │ Train владеет TrainCar
+         │
+┌────────┴────────────────────────────┐
+│         Train                       │
+│  ─────────────────────────────────   │
+│  -trainNumber: int                  │
+│  -route: string                     │
+│  -cars: vector<unique_ptr<TrainCar>>│
+│  ─────────────────────────────────   │
+│  +Train(...)                        │
+│  +~Train()                          │
+│  +addCar(car): void                 │
+│  +removeCar(carNumber): void        │
+│  +createTrainWithException(): Train*│  ← Исключение с new (bad_alloc)
+└─────────────────────────────────────┘
+         ▲
+         │
+         │ АГРЕГАЦИЯ (shared_ptr)
+         │
+┌────────┴────────────────────────────┐
+│         Trip                        │
+│  ─────────────────────────────────   │
+│  -train: shared_ptr<Train>          │
+│  -staffManager: shared_ptr<...>     │
+│  -departureTime: string             │
+│  -arrivalTime: string               │
+│  ─────────────────────────────────   │
+│  +Trip(...)                         │
+│  +startTrip(): void                 │
+│  +validateTrip(): void              │
+│  +displayInfo(): void               │
+└─────────────────────────────────────┘
+         │
+         │ АГРЕГАЦИЯ (shared_ptr)
+         │
+         ▼
+┌─────────────────────────────────────┐
+│      StaffManager                    │
+│  ─────────────────────────────────   │
+│  -staff: vector<shared_ptr<Employee>>│
+│  ─────────────────────────────────   │
+│  +StaffManager()                     │
+│  +addEmployee(employee): void       │
+│  +removeEmployee(name): void        │
+│  +assembleMinimalStaff(...): void   │  ← Сбор персонала для поездки
+│  +displayStaff(): void               │
+└─────────────────────────────────────┘
+         │
+         │ АГРЕГАЦИЯ (shared_ptr)
+         │
+         ▼
+    ┌─────────┐
+    │ Employee│  (Conductor, Engineer)
+    └─────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ТИПЫ СВЯЗЕЙ:
+
+1. НАСЛЕДОВАНИЕ (Inheritance):
+   Employee ← Conductor
+   Employee ← Engineer
+
+2. КОМПОЗИЦИЯ (Composition):
+   Train *-- TrainCar (unique_ptr)
+   - Train владеет TrainCar
+   - При уничтожении Train уничтожаются все TrainCar
+
+3. АГРЕГАЦИЯ (Aggregation):
+   StaffManager o-- Employee (shared_ptr)
+   Trip o-- Train (shared_ptr)
+   Trip o-- StaffManager (shared_ptr)
+   - Объекты могут существовать независимо
+   - Ссылки через shared_ptr
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ИСКЛЮЧИТЕЛЬНЫЕ СИТУАЦИИ:
+
+1. EmployeeException (пользовательский класс)
+   └─ Выбрасывается в конструкторе Employee при пустом имени
+
+2. std::invalid_argument
+   └─ Отрицательный опыт/зарплата, пустые параметры
+
+3. std::runtime_error
+   └─ Вагон не найден, недостаточно персонала, дубликат сотрудника
+
+4. std::bad_alloc
+   └─ Исключение с оператором new (Train::createTrainWithException)
+
+5. std::logic_error
+   └─ Логические ошибки при сборке персонала
+
+═══════════════════════════════════════════════════════════════════════════════
+
