@@ -18,3 +18,4 @@ void Engineer::performDuty() const {
     std::cout << name << " управляет поездом (лицензия: " << licenseType << ")" << std::endl;
 }
 
+

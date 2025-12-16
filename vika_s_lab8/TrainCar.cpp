@@ -15,3 +15,4 @@ void TrainCar::displayInfo() const {
               << ", вместимость: " << capacity << " мест" << std::endl;
 }
 
+

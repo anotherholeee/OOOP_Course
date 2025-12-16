@@ -18,3 +18,4 @@ void Conductor::performDuty() const {
     std::cout << name << " проверяет билеты пассажиров в поезде №" << trainNumber << std::endl;
 }
 
+

@@ -56,3 +56,4 @@ void Trip::displayInfo() const {
     std::cout << "Прибытие: " << arrivalTime << std::endl;
 }
 
+
